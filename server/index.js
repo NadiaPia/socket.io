@@ -19,10 +19,22 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
     console.log(`User connected: ${socket.id}`); //User connected: O47tlsRvDakptmhtAAAJ - every time after user come in website
 
+    //Send message to everyone, but yourself:-------------------------------------  
+    
+    /*
     socket.on("send_message", (data) => {  //it is listening the event called "send_message" and this event will contain some data
-        //console.log(data); //we want to emit this data to everyone, who is connected to this server, but not yourself
+        //console.log(data); //we want to emit this data to everyone, who is connected to this server, but not yourself              
         socket.broadcast.emit("receive_message", data); //broadcast allows us to sent data anyone but 
-        //yourself. We will listening to this in the FE so that we can receive all the messages that were emited by other people.
+        //yourself. We will listening to this in the FE so that we can receive all the messages that were emited by other people.        
+    });
+    */
+
+    socket.on("join_room", (data) => { //listenin to the join_room event where we sent the data about the room
+        socket.join(data);
+    });
+
+    socket.on("send_message", (data) => {
+        socket.to(data.room).emit("receive_message", data);
     });
 
 }); //.on means listening for the event, "connection" - the type of the event. There is a 
